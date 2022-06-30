@@ -5,9 +5,10 @@ const EmberApp = require('ember-cli/lib/broccoli/ember-app');
 module.exports = function (defaults) {
   let app = new EmberApp(defaults, {
     // Add options here
-    // tsconfig note says you have to enable ember-cli-babel's sourceMaps option as well to get source maps to work.
-    babel: {
-      sourceMaps: true,
+    // Enable sourcemaps for 'ember-cli-babel' preprocessor
+    sourcemaps: {
+      enabled: true,
+      extensions: ['js', 'ts', 'css'],
     },
   });
 

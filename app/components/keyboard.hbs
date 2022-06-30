@@ -1,0 +1,19 @@
+{{on-document 'keyup' this.onKeyup}}
+
+<div class='keyboard'>
+  {{#each this.keyLayout as |row|}}
+    <div class='row'>
+      {{#each row as |key|}}
+        <button type='button' class='key' {{on 'click' (fn this.onClick key)}}>
+          {{uppercase key}}
+        </button>
+      {{/each}}
+    </div>
+  {{/each}}
+</div>
+
+<h1>
+  {{this.currentGuess}}
+</h1>
+
+{{yield}}
