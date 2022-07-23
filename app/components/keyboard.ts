@@ -1,6 +1,8 @@
-import { action } from '@ember/object';
+import { action, get } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import Component from '@glimmer/component';
+import { TrackedArray } from 'tracked-built-ins';
+import { WORDLIST } from '../utils/word-list';
 
 interface KeyboardArgs {}
 
@@ -10,15 +12,37 @@ export default class Keyboard extends Component<KeyboardArgs> {
    */
   @tracked currentGuess = '';
 
+  guesses: TrackedArray<string[]> = new TrackedArray([]);
+
+  maxGuesses = 6;
+
+  // TODO: Make this property update on a daily basis.
+  // WORDLIST[Math.floor(Math.random() * WORDLIST.length)];
+  wordOfTheDay: string = 'hello'; // Predictable for development purposes
+
+  /**
+   * The official Wordle list of possible words.
+   */
+  wordList: string[] = WORDLIST.split(/\r?\n/);
+
   /**
    * The layout of keys to display on the game's virtual keyboard, with each
    * nested array representing a row.
    */
+  // TODO: Replace enter and backspace with icons.
   keyLayout: string[][] = [
     ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
     ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
     ['Enter', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'Backspace'],
   ];
+
+  get guessCount() {
+    return this.guesses.length;
+  }
+
+  get isGuessInWordList(): boolean {
+    return this.wordList.includes(this.currentGuess);
+  }
 
   /**
    * Adds the letter clicked on in the game's virtual keyboard to the
@@ -55,8 +79,24 @@ export default class Keyboard extends Component<KeyboardArgs> {
   handleKeyInput(key: string): void {
     switch (key) {
       case 'Enter':
-        // TODO: Submit the guess once game play is implemented
-        console.log(`The content is ${this.currentGuess}`);
+        if (this.currentGuess.length < 5) {
+          alert('Not enough letters');
+        } else if (!this.isGuessInWordList) {
+          alert(`${this.currentGuess} not in word list`);
+          this.currentGuess = '';
+        } else if (
+          this.isGuessInWordList &&
+          this.guesses.length < this.maxGuesses
+        ) {
+          // TODO: Check each letter against the word to see if it's in the word and whether it's in the correct position.
+          this.guesses.push(this.currentGuess.split(''));
+          // debugger;
+          this.currentGuess = '';
+
+          console.log('Guesses: ', this.guesses);
+        }
+
+        this.currentGuess = '';
         break;
 
       case 'Backspace':
@@ -67,7 +107,9 @@ export default class Keyboard extends Component<KeyboardArgs> {
         break;
 
       default:
-        this.currentGuess += key;
+        if (this.currentGuess.length < 5) {
+          this.currentGuess += key;
+        }
     }
   }
 }

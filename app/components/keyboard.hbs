@@ -1,5 +1,19 @@
 {{on-document 'keyup' this.onKeyup}}
 
+<div class='guesses'>
+  {{#each this.guesses as |guess|}}
+    {{log guess}}
+    <div class='row'>
+      {{#each guess as |letter|}}
+        {{log 'Letter: ' letter}}
+        <div class='letter'>
+          {{uppercase letter}}
+        </div>
+      {{/each}}
+    </div>
+  {{/each}}
+</div>
+
 <div class='keyboard'>
   {{#each this.keyLayout as |row|}}
     <div class='row'>
@@ -13,7 +27,5 @@
 </div>
 
 <h1>
-  {{this.currentGuess}}
+  Current Guess: {{this.currentGuess}}
 </h1>
-
-{{yield}}
