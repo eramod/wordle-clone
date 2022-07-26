@@ -2,10 +2,8 @@
 
 <div class='guesses'>
   {{#each this.guesses as |guess|}}
-    {{log guess}}
     <div class='row'>
       {{#each guess as |letter|}}
-        {{log 'Letter: ' letter}}
         <div class='letter'>
           {{uppercase letter}}
         </div>
@@ -25,7 +23,3 @@
     </div>
   {{/each}}
 </div>
-
-<h1>
-  Current Guess: {{this.currentGuess}}
-</h1>

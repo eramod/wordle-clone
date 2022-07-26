@@ -45,18 +45,40 @@ To Do List:
 [X] Implement `backspace` for both the click event on the game's keyboard and the keyup event from typing on the real keyboard. Take a substring of the current guess that does not include the last letter.
 [X] UI: Add a representation of the user's guesses, with the current one being editable
   [X] Start with a hard coded list of guesses just so you can show it in the UI
-[ ] CSS for guesses display
-[ ] Implement game logic - see game definition when you're ready to add more detail to this section
-[ ] Add enter key functionality
-  [ ] If guess matches word of the day, alert user you win!
-  [ ] If guess is not in the word list, alert user "Not in word list"
-  [ ] If guess is too short, alert user "Not enough letters"
-  [ ] If guess has already been guessed, alert user "Already guessed"
+[X] CSS for guesses display
+[X] Implement game logic - see game definition when you're ready to add more detail to this section
+[X] Add enter key functionality
+  [X] If guess matches word of the day, alert user you win!
+  [X] If guess is not in the word list, alert user "Not in word list"
+  [X] If guess is too short, alert user "Not enough letters"
+[X] Implement end of game functionality. If user guess matches word of the day, alert "You win!". If user runs out of guesses, alert "Better luck next time".
+[ ] Implementation and CSS for guesses (animation and colors to indicate how letters in a guess compare to the word of the day
+  [ ] green if in the word in the correct spot
+  [ ] yellow if in the word but in the wrong spot
+  [ ] gray if not in the word) and keyboard
 [ ] Replace alerts with a "toast" (a pop-up that disappears)
-[ ] Implement end of game functionality. If user guess matches word of the day, alert "You win!". If user runs out of guesses, alert "Better luck next time".
-[ ] CSS for guesses (animation and colors to indicate how letters in a guess compare to the word of the day, green if in the word in the correct spot, yellow if in the word but in the wrong spot, gray if not in the word) and keyboard (colors to match guess colors)
 
 Stretch goals:
 [ ] Implement end game share functionality
 [ ] Implement strict mode
 [ ] Handle touch events so a user can play on a phone
+
+
+Questions:
+
+
+
+The basic steps of a function design recipe:
+1. From Problem Analysis to Data Definitions
+   Identify the information that must be represented and how it is represented in the chosen programming language. Formulate data definitions and illustrate them with examples. (Designer must: analyze a problem statement, typically stated as a word problem)
+
+2. Signature, Purpose Statement, Header
+   State what kind of data the desired function consumes and produces. Formulate a concise answer to the question what the function computes. Define a stub that lives up to the signature. (Designer must: extract and express its essence, abstractly)
+3. Functional Examples
+   Work through examples that illustrate the function’s purpose. (Designer must: illustrate the essence with examples)
+4. Function Template
+   Translate the data definitions into an outline of the function. (Designer must: make outlines and plans based on this analysis). This is where you design the signature of the function.
+5. Function Definition
+   Fill in the gaps in the function template. Exploit the purpose statement and the examples. (Designer must: evaluate results with respect to expected outcomes)
+6. Testing
+   Articulate the examples as tests and ensure that the function passes all. Doing so discovers mistakes. Tests also supplement examples in that they help others read and understand the definition when the need arises—and it will arise for any serious program. (Designer must: revise the product in light of failed checks and tests)
