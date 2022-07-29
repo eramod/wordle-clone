@@ -52,10 +52,15 @@ To Do List:
   [X] If guess is not in the word list, alert user "Not in word list"
   [X] If guess is too short, alert user "Not enough letters"
 [X] Implement end of game functionality. If user guess matches word of the day, alert "You win!". If user runs out of guesses, alert "Better luck next time".
-[ ] Implementation and CSS for guesses (animation and colors to indicate how letters in a guess compare to the word of the day
+[ ] Make `wordOfTheDay` update daily at midnight in the user's timezone
+[ ] Replace Enter and Backspace keys on the virtual keyboard with icons
+[ ] Refactor keyboard component. Need to create a game component that will call a guesses component and a keyboard component. Or just rename the keyboard component to game if you determine that the component doesn't seem big enough to split up.
+[ ] Implementation and CSS for guesses (animation and colors to indicate how letters in a guess compare to the word of the day)
   [ ] green if in the word in the correct spot
   [ ] yellow if in the word but in the wrong spot
-  [ ] gray if not in the word) and keyboard
+  [ ] gray if not in the word
+  [ ] Need to deal with multiple letters in the same word as well
+      [ ] If you guess a word with 2 of the same letters and there is only one of that letter, how do you deal with that? Maybe if one of them is in the correct spot that should be green, and if neither of them is in the correct spot the first one turns yellow.
 [ ] Replace alerts with a "toast" (a pop-up that disappears)
 
 Stretch goals:
