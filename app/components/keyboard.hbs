@@ -1,10 +1,14 @@
 {{on-document 'keyup' this.onKeyup}}
 
 <div class='guesses'>
-  {{#each this.guesses as |guess|}}
+  {{#each this.guesses as |guess index|}}
     <div class='row'>
-      {{#each guess as |letter|}}
-        <div class='letter'>
+      {{#each guess as |letter letterIndex|}}
+        <div
+          class='letter'
+          data-test-row-index={{index}}
+          data-test-letter-index={{letterIndex}}
+        >
           {{uppercase letter}}
         </div>
       {{/each}}

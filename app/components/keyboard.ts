@@ -5,7 +5,7 @@ import Component from '@glimmer/component';
 import { TrackedArray } from 'tracked-built-ins';
 import { WORDLIST } from '../utils/word-list';
 
-interface KeyboardArgs {}
+interface KeyboardArgs {} // FIXME: Remove? Not sure if I'm only going to use one component or multiple.
 
 export default class Keyboard extends Component<KeyboardArgs> {
   @tracked currentGuessID = 0;
@@ -85,6 +85,44 @@ export default class Keyboard extends Component<KeyboardArgs> {
     }
   }
 
+  get wordOfTheDayLetterCounts(): Record<string, number> {
+    let counts: Record<string, number> = {};
+
+    for (let letter of this.wordOfTheDay) {
+      counts[letter] = (counts[letter] || 0) + 1;
+    }
+
+    return counts;
+  }
+
+  get currentGuessLetterCounts(): Record<string, number> {
+    let counts: Record<string, number> = {};
+
+    for (let letter of this.currentGuess) {
+      counts[letter] = (counts[letter] || 0) + 1;
+    }
+
+    return counts;
+  }
+
+  holder = [];
+
+  get wordLetterCounts(): Record<string, Record<string, number>> {
+    let counts: Record<string, Record<string, number>> = {};
+
+    for (let word of this.wordList) {
+      let wordCounts: Record<string, number> = {};
+
+      for (let letter of word) {
+        wordCounts[letter] = (wordCounts[letter] || 0) + 1;
+      }
+
+      counts[word] = wordCounts;
+    }
+
+    return counts;
+  }
+
   /**
    * Handles common logic for responding to events, whether from the game's
    * virtual keyboard or the user's physical one.
@@ -95,6 +133,7 @@ export default class Keyboard extends Component<KeyboardArgs> {
     switch (key) {
       case 'Enter':
         if (this.currentGuess.join('') === this.wordOfTheDay) {
+          // TODO: Make all the letters green
           // TODO: Turn this into a toast message.
           alert('You win!');
         } else if (this.currentGuess.join('').length < 5) {
@@ -109,7 +148,70 @@ export default class Keyboard extends Component<KeyboardArgs> {
           this.isGuessInWordList &&
           this.currentGuessID < this.maxGuessID
         ) {
-          // TODO: Check each letter against the word of the day to see if it's in the word and whether it's in the correct position.
+          // TODO: Color keyboard letters as well. A yellow letter can later be overwritten to be green.
+          this.wordOfTheDay.split('').forEach((letter, index) => {
+            let el = document.querySelector(
+              `[data-test-row-index="${this.currentGuessID}"][data-test-letter-index="${index}"]`
+            );
+            assert('Element must exist', el);
+
+            // Check for GREEN
+            if (letter === this.currentGuess[index]) {
+              // This can occur when the word of the day has multiple instances of the same letter and the user has entered 2 instances of that letter.
+              if (el.classList.contains('yellow')) {
+                el.classList.remove('yellow');
+              }
+              el.classList.add('green');
+            } else {
+              // Check for YELLOW
+              this.currentGuess.forEach((guessLetter, guessIndex) => {
+                let el: HTMLElement | null = document.querySelector(
+                  `[data-test-row-index="${this.currentGuessID}"][data-test-letter-index="${guessIndex}"]`
+                );
+                assert('Element must exist', el);
+
+                if (letter === guessLetter && !el.classList.contains('green')) {
+                  el.classList.add('yellow');
+                }
+              });
+            }
+          });
+          // Default to GRAY
+          this.currentGuess.forEach((letter, i) => {
+            let el = document.querySelector(
+              `[data-test-row-index="${this.currentGuessID}"][data-test-letter-index="${i}"]`
+            );
+
+            assert('Element must exist', el);
+            if (
+              !el.classList.contains('green') &&
+              !el.classList.contains('yellow')
+            ) {
+              el.classList.add('gray');
+            }
+          });
+
+          // function enumerate(xs) {
+          //   return xs.map((x, i) => [i, x])
+          // }
+
+          // for (const [i, thing] of enumerate(['a', 'b', 'c'])) {
+
+          // }
+
+          /**
+           * TODO: REMOVE THIS
+           * Think about this: Does it matter which thing you loop through first? In this case, it does matter, and the fact that I had so many edge cases to deal with should be an indicator there's something wrong with the logic.
+           *
+           * T I M E S
+           * Y B Y B Y
+           *
+           * Loop through the word of the day. Is the wordOfDay[0] === guess[0]? Yes = green, no = look for yellow case (start inner loop for each of the letters in the guess) and if the letter exists in the guess you make it yellow, EXCEPT if the letter is already colored you don't make it yellow.
+           * T H U M B <- word of the day
+           * I M A M S < - guess
+           * B B B G B
+           */
+
           // Here, we already know that the guess is valid and it already occupies the correct place in the guesses array, so all we have to do is update the `currentGuessID` and `currentLetterID` so the user can enter a new guess in the next slot.
           this.currentGuessID += 1;
           this.currentLetterID = 0;
@@ -119,7 +221,8 @@ export default class Keyboard extends Component<KeyboardArgs> {
 
       case 'Backspace':
         this.currentGuess[this.currentLetterID - 1] = '';
-        this.currentLetterID -= 1;
+        this.currentLetterID > 0 ? (this.currentLetterID -= 1) : 0;
+        // this.currentLetterID = Math.max(this.currentLetterID - 1, 0)
 
         break;
 
