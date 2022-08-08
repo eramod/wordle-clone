@@ -52,10 +52,20 @@ To Do List:
   [X] If guess is not in the word list, alert user "Not in word list"
   [X] If guess is too short, alert user "Not enough letters"
 [X] Implement end of game functionality. If user guess matches word of the day, alert "You win!". If user runs out of guesses, alert "Better luck next time".
-[ ] Implementation and CSS for guesses (animation and colors to indicate how letters in a guess compare to the word of the day
-  [ ] green if in the word in the correct spot
-  [ ] yellow if in the word but in the wrong spot
-  [ ] gray if not in the word) and keyboard
+[X] Refactor color code. Use a data selector to add the CSS, and name them something like, data-disposition="exact", data-disposition="included", and data-disposition="not-in-word"
+[X] Implementation for guesses. Add colors to indicate how letters in a guess compare to the word of the day.
+  [X] Green if in the word in the correct spot
+  [X] Yellow if in the word but in the wrong spot
+  [X] Gray if not in the word
+  [X] Need to deal with multiple letters in the same word as well
+  [X] Green for the winning case
+[ ] Implement end of game failure mode - toast message with the word of the day
+[ ] Read up on algebraic data types. What is a sum type? What is a product type? Why are they called that? Learned a code smell, where I was using a product data type for the color by using classes as the selector, and as a result, I had to write a lot of code to remove classes, and ended up mixing up the functionality for different colors, which made it harder to read the code. Once I switched to a sum data type, i.e. one you could use an enum or a union data type for so that there is only one possible value at a time, I could remove a lot of code that was handling removing colors in order to overwrite a color.
+[ ] Make `wordOfTheDay` update daily at midnight in the user's timezone
+[ ] Replace Enter and Backspace keys on the virtual keyboard with icons
+[ ] Refactor keyboard component. Need to create a game component that will call a guesses component and a keyboard component. Or just rename the keyboard component to game if you determine that the component doesn't seem big enough to split up.
+[ ] Animation for guesses - flip animation and colors
+
 [ ] Replace alerts with a "toast" (a pop-up that disappears)
 
 Stretch goals:

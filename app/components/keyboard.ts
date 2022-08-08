@@ -133,7 +133,21 @@ export default class Keyboard extends Component<KeyboardArgs> {
     switch (key) {
       case 'Enter':
         if (this.currentGuess.join('') === this.wordOfTheDay) {
-          // TODO: Make all the letters green
+          // Make all letters in the guess GREEN
+          this.currentGuess.forEach((letter, i) => {
+            let el = document.querySelector(
+              `[data-guess-index="${this.currentGuessID}"][data-letter-index="${i}"]`
+            );
+
+            assert('Element must exist', el);
+            el.setAttribute('data-letter-disposition', 'exact');
+
+            // Update guessed keyboard letter colors
+            [...document.getElementsByClassName('keyboard-letter')]
+              .find((el) => el.innerHTML.trim() === letter.toUpperCase())
+              ?.setAttribute('data-letter-disposition', 'exact');
+          });
+
           // TODO: Turn this into a toast message.
           alert('You win!');
         } else if (this.currentGuess.join('').length < 5) {
@@ -150,44 +164,42 @@ export default class Keyboard extends Component<KeyboardArgs> {
         ) {
           // TODO: Color keyboard letters as well. A yellow letter can later be overwritten to be green.
           this.wordOfTheDay.split('').forEach((letter, index) => {
-            let el = document.querySelector(
-              `[data-test-row-index="${this.currentGuessID}"][data-test-letter-index="${index}"]`
+            let el: HTMLElement | null = document.querySelector(
+              `[data-guess-index="${this.currentGuessID}"][data-letter-index="${index}"]`
             );
             assert('Element must exist', el);
 
             // Check for GREEN
             if (letter === this.currentGuess[index]) {
-              // This can occur when the word of the day has multiple instances of the same letter and the user has entered 2 instances of that letter.
-              if (el.classList.contains('yellow')) {
-                el.classList.remove('yellow');
-              }
-              el.classList.add('green');
+              // This can occur when the word of the day has multiple instances of a letter and the user's guess also has multiple instances of that letter.
+              el.setAttribute('data-letter-disposition', 'exact');
             } else {
               // Check for YELLOW
               this.currentGuess.forEach((guessLetter, guessIndex) => {
                 let el: HTMLElement | null = document.querySelector(
-                  `[data-test-row-index="${this.currentGuessID}"][data-test-letter-index="${guessIndex}"]`
+                  `[data-guess-index="${this.currentGuessID}"][data-letter-index="${guessIndex}"]`
                 );
                 assert('Element must exist', el);
 
-                if (letter === guessLetter && !el.classList.contains('green')) {
-                  el.classList.add('yellow');
+                if (
+                  letter === guessLetter &&
+                  el.getAttribute('data-letter-disposition') !== 'exact'
+                ) {
+                  el.setAttribute('data-letter-disposition', 'included');
                 }
               });
             }
           });
+
           // Default to GRAY
           this.currentGuess.forEach((letter, i) => {
             let el = document.querySelector(
-              `[data-test-row-index="${this.currentGuessID}"][data-test-letter-index="${i}"]`
+              `[data-guess-index="${this.currentGuessID}"][data-letter-index="${i}"]`
             );
 
             assert('Element must exist', el);
-            if (
-              !el.classList.contains('green') &&
-              !el.classList.contains('yellow')
-            ) {
-              el.classList.add('gray');
+            if (el.getAttribute('data-letter-disposition') === '') {
+              el.setAttribute('data-letter-disposition', 'not-included');
             }
           });
 
