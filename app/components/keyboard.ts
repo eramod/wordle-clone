@@ -85,44 +85,6 @@ export default class Keyboard extends Component<KeyboardArgs> {
     }
   }
 
-  get wordOfTheDayLetterCounts(): Record<string, number> {
-    let counts: Record<string, number> = {};
-
-    for (let letter of this.wordOfTheDay) {
-      counts[letter] = (counts[letter] || 0) + 1;
-    }
-
-    return counts;
-  }
-
-  get currentGuessLetterCounts(): Record<string, number> {
-    let counts: Record<string, number> = {};
-
-    for (let letter of this.currentGuess) {
-      counts[letter] = (counts[letter] || 0) + 1;
-    }
-
-    return counts;
-  }
-
-  holder = [];
-
-  get wordLetterCounts(): Record<string, Record<string, number>> {
-    let counts: Record<string, Record<string, number>> = {};
-
-    for (let word of this.wordList) {
-      let wordCounts: Record<string, number> = {};
-
-      for (let letter of word) {
-        wordCounts[letter] = (wordCounts[letter] || 0) + 1;
-      }
-
-      counts[word] = wordCounts;
-    }
-
-    return counts;
-  }
-
   /**
    * Handles common logic for responding to events, whether from the game's
    * virtual keyboard or the user's physical one.
