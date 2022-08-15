@@ -119,35 +119,57 @@ export default class Keyboard extends Component<KeyboardArgs> {
           // TODO: Turn this into a toast message.
           alert(`${this.currentGuess.join('')} not in word list`);
         } else if (this.currentGuessID === this.maxGuessID) {
-          alert('You lose! Better luck next time.');
+          alert('The word of the day is ${this.wordOfTheDay}.');
         } else if (
           this.isGuessInWordList &&
           this.currentGuessID < this.maxGuessID
         ) {
           // TODO: Color keyboard letters as well. A yellow letter can later be overwritten to be green.
           this.wordOfTheDay.split('').forEach((letter, index) => {
-            let el: HTMLElement | null = document.querySelector(
+            let guessEl: HTMLElement | null = document.querySelector(
               `[data-guess-index="${this.currentGuessID}"][data-letter-index="${index}"]`
             );
-            assert('Element must exist', el);
+
+            assert('Element must exist', guessEl);
 
             // Check for GREEN
             if (letter === this.currentGuess[index]) {
-              // This can occur when the word of the day has multiple instances of a letter and the user's guess also has multiple instances of that letter.
-              el.setAttribute('data-letter-disposition', 'exact');
+              guessEl.setAttribute('data-letter-disposition', 'exact');
+
+              this.currentGuess.forEach((guessLetter) => {
+                let el = document.querySelector(`[data-key="${guessLetter}"]`);
+
+                if (guessLetter === letter) {
+                  el?.setAttribute('data-letter-disposition', 'exact');
+                }
+              });
             } else {
               // Check for YELLOW
               this.currentGuess.forEach((guessLetter, guessIndex) => {
-                let el: HTMLElement | null = document.querySelector(
+                let guessEl: HTMLElement | null = document.querySelector(
                   `[data-guess-index="${this.currentGuessID}"][data-letter-index="${guessIndex}"]`
                 );
-                assert('Element must exist', el);
+                assert('Guess letter element must exist', guessEl);
+                let keyboardEl = document.querySelector(
+                  `[data-key="${guessLetter}"]`
+                );
+                assert('Keyboard letter element must exist', keyboardEl);
 
                 if (
                   letter === guessLetter &&
-                  el.getAttribute('data-letter-disposition') !== 'exact'
+                  guessEl.getAttribute('data-letter-disposition') !== 'exact'
                 ) {
-                  el.setAttribute('data-letter-disposition', 'included');
+                  guessEl.setAttribute('data-letter-disposition', 'included');
+                }
+
+                if (
+                  letter === guessLetter &&
+                  keyboardEl.getAttribute('data-letter-disposition') !== 'exact'
+                ) {
+                  keyboardEl.setAttribute(
+                    'data-letter-disposition',
+                    'included'
+                  );
                 }
               });
             }
@@ -155,36 +177,24 @@ export default class Keyboard extends Component<KeyboardArgs> {
 
           // Default to GRAY
           this.currentGuess.forEach((letter, i) => {
-            let el = document.querySelector(
+            let guessEl = document.querySelector(
               `[data-guess-index="${this.currentGuessID}"][data-letter-index="${i}"]`
             );
 
-            assert('Element must exist', el);
-            if (el.getAttribute('data-letter-disposition') === '') {
-              el.setAttribute('data-letter-disposition', 'not-included');
+            let keyboardEl = document.querySelector(`[data-key="${letter}"]`);
+            assert('Element must exist', guessEl);
+
+            if (guessEl.getAttribute('data-letter-disposition') === '') {
+              guessEl.setAttribute('data-letter-disposition', 'not-included');
+            }
+
+            if (keyboardEl?.getAttribute('data-letter-disposition') === '') {
+              keyboardEl.setAttribute(
+                'data-letter-disposition',
+                'not-included'
+              );
             }
           });
-
-          // function enumerate(xs) {
-          //   return xs.map((x, i) => [i, x])
-          // }
-
-          // for (const [i, thing] of enumerate(['a', 'b', 'c'])) {
-
-          // }
-
-          /**
-           * TODO: REMOVE THIS
-           * Think about this: Does it matter which thing you loop through first? In this case, it does matter, and the fact that I had so many edge cases to deal with should be an indicator there's something wrong with the logic.
-           *
-           * T I M E S
-           * Y B Y B Y
-           *
-           * Loop through the word of the day. Is the wordOfDay[0] === guess[0]? Yes = green, no = look for yellow case (start inner loop for each of the letters in the guess) and if the letter exists in the guess you make it yellow, EXCEPT if the letter is already colored you don't make it yellow.
-           * T H U M B <- word of the day
-           * I M A M S < - guess
-           * B B B G B
-           */
 
           // Here, we already know that the guess is valid and it already occupies the correct place in the guesses array, so all we have to do is update the `currentGuessID` and `currentLetterID` so the user can enter a new guess in the next slot.
           this.currentGuessID += 1;
