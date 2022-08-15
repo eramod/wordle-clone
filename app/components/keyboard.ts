@@ -49,6 +49,7 @@ export default class Keyboard extends Component<KeyboardArgs> {
   get currentGuess(): string[] {
     let guess = this.guesses[this.currentGuessID];
     assert('Guess must exist', guess);
+
     return guess;
   }
 
@@ -97,16 +98,15 @@ export default class Keyboard extends Component<KeyboardArgs> {
         if (this.currentGuess.join('') === this.wordOfTheDay) {
           // Make all letters in the guess GREEN
           this.currentGuess.forEach((letter, i) => {
-            let el = document.querySelector(
-              `[data-guess-index="${this.currentGuessID}"][data-letter-index="${i}"]`
-            );
+            let guessEl = this.getGuessElement(this.currentGuessID, i);
 
-            assert('Element must exist', el);
-            el.setAttribute('data-letter-disposition', 'exact');
+            guessEl.setAttribute('data-letter-disposition', 'exact');
 
-            // Update guessed keyboard letter colors
+            // Make all keyboard letters guessed GREEN
             [...document.getElementsByClassName('keyboard-letter')]
-              .find((el) => el.innerHTML.trim() === letter.toUpperCase())
+              .find(
+                (guessEl) => guessEl.innerHTML.trim() === letter.toUpperCase()
+              )
               ?.setAttribute('data-letter-disposition', 'exact');
           });
 
@@ -124,37 +124,32 @@ export default class Keyboard extends Component<KeyboardArgs> {
           this.isGuessInWordList &&
           this.currentGuessID < this.maxGuessID
         ) {
-          // TODO: Color keyboard letters as well. A yellow letter can later be overwritten to be green.
           this.wordOfTheDay.split('').forEach((letter, index) => {
-            let guessEl: HTMLElement | null = document.querySelector(
-              `[data-guess-index="${this.currentGuessID}"][data-letter-index="${index}"]`
-            );
-
-            assert('Element must exist', guessEl);
+            let guessEl = this.getGuessElement(this.currentGuessID, index);
 
             // Check for GREEN
             if (letter === this.currentGuess[index]) {
+              // Update guess letters
               guessEl.setAttribute('data-letter-disposition', 'exact');
 
+              // Update keyboard letters
               this.currentGuess.forEach((guessLetter) => {
-                let el = document.querySelector(`[data-key="${guessLetter}"]`);
+                let keyboardEl = this.getKeyboardElement(guessLetter);
 
                 if (guessLetter === letter) {
-                  el?.setAttribute('data-letter-disposition', 'exact');
+                  keyboardEl.setAttribute('data-letter-disposition', 'exact');
                 }
               });
             } else {
               // Check for YELLOW
               this.currentGuess.forEach((guessLetter, guessIndex) => {
-                let guessEl: HTMLElement | null = document.querySelector(
-                  `[data-guess-index="${this.currentGuessID}"][data-letter-index="${guessIndex}"]`
+                let guessEl = this.getGuessElement(
+                  this.currentGuessID,
+                  guessIndex
                 );
-                assert('Guess letter element must exist', guessEl);
-                let keyboardEl = document.querySelector(
-                  `[data-key="${guessLetter}"]`
-                );
-                assert('Keyboard letter element must exist', keyboardEl);
+                let keyboardEl = this.getKeyboardElement(guessLetter);
 
+                // Update guess letters
                 if (
                   letter === guessLetter &&
                   guessEl.getAttribute('data-letter-disposition') !== 'exact'
@@ -162,6 +157,7 @@ export default class Keyboard extends Component<KeyboardArgs> {
                   guessEl.setAttribute('data-letter-disposition', 'included');
                 }
 
+                // Update keyboard letters
                 if (
                   letter === guessLetter &&
                   keyboardEl.getAttribute('data-letter-disposition') !== 'exact'
@@ -177,18 +173,16 @@ export default class Keyboard extends Component<KeyboardArgs> {
 
           // Default to GRAY
           this.currentGuess.forEach((letter, i) => {
-            let guessEl = document.querySelector(
-              `[data-guess-index="${this.currentGuessID}"][data-letter-index="${i}"]`
-            );
+            let guessEl = this.getGuessElement(this.currentGuessID, i);
+            let keyboardEl = this.getKeyboardElement(letter);
 
-            let keyboardEl = document.querySelector(`[data-key="${letter}"]`);
-            assert('Element must exist', guessEl);
-
+            // Update guess letters
             if (guessEl.getAttribute('data-letter-disposition') === '') {
               guessEl.setAttribute('data-letter-disposition', 'not-included');
             }
 
-            if (keyboardEl?.getAttribute('data-letter-disposition') === '') {
+            // Update keyboard letters
+            if (keyboardEl.getAttribute('data-letter-disposition') === '') {
               keyboardEl.setAttribute(
                 'data-letter-disposition',
                 'not-included'
@@ -216,5 +210,23 @@ export default class Keyboard extends Component<KeyboardArgs> {
           this.currentLetterID += 1;
         }
     }
+  }
+
+  getGuessElement(guessID: number, index: number): HTMLElement {
+    let el = document.querySelector(
+      `[data-guess-index="${guessID}"][data-letter-index="${index}"]`
+    );
+
+    assert('El is an HTML element', el instanceof HTMLElement);
+
+    return el;
+  }
+
+  getKeyboardElement(letter: string) {
+    let el = document.querySelector(`[data-key="${letter}"]`);
+
+    assert('Element must exist', el instanceof HTMLElement);
+
+    return el;
   }
 }
