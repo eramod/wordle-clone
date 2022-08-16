@@ -1,1 +1,36 @@
-<Keyboard />
+{{on-document 'keyup' this.onKeyup}}
+
+<div class='guesses'>
+  {{#each this.guesses as |guess guessIndex|}}
+    <div class='row'>
+      {{#each guess as |letter letterIndex|}}
+        <div
+          class='letter'
+          data-guess-index={{guessIndex}}
+          data-letter-index={{letterIndex}}
+          data-letter-disposition=''
+        >
+          {{uppercase letter}}
+        </div>
+      {{/each}}
+    </div>
+  {{/each}}
+</div>
+
+<div class='keyboard'>
+  {{#each this.keyLayout as |row|}}
+    <div class='row'>
+      {{#each row as |key|}}
+        <button
+          type='button'
+          class='keyboard-letter'
+          data-key={{key}}
+          data-letter-disposition=''
+          {{on 'click' (fn this.onClick key)}}
+        >
+          {{uppercase key}}
+        </button>
+      {{/each}}
+    </div>
+  {{/each}}
+</div>
